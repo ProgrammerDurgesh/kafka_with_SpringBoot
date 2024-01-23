@@ -1,0 +1,35 @@
+server:
+  port: 2222
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/kafka?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+    username: root
+    password: r@@T0000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      format_sql: true  # Uncomment this line if needed
+    open-in-view: true
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    port: 587
+    username: durgesh.y@drcsystems.com
+    password: pcdzztscuegdnjxz
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate: INFO
+    org.hibernate.cache: DEBUG
+    org.hibernate.stat: DEBUG
