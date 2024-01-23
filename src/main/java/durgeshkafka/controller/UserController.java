@@ -1,5 +1,6 @@
 package durgeshkafka.controller;
 
+import durgeshkafka.configuration.SecurityConfig;
 import durgeshkafka.entity.User;
 import durgeshkafka.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
     private final UserService userService;
+    private SecurityConfig securityConfig;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(SecurityConfig securityConfig, UserService userService) {
+        this.securityConfig = securityConfig;
         this.userService = userService;
     }
 

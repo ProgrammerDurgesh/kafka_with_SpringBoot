@@ -1,6 +1,7 @@
 package durgeshkafka.service;
 
 import durgeshkafka.entity.User;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface UserService {
     User updateUser(Integer userId, User user);
 
     void deleteUser(Integer userId);
+
 }
