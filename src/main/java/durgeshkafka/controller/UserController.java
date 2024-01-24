@@ -1,9 +1,11 @@
 package durgeshkafka.controller;
 
 import durgeshkafka.configuration.SecurityConfig;
+import durgeshkafka.configuration.kafka.Producers;
 import durgeshkafka.entity.User;
 import durgeshkafka.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +21,13 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private final Producers producers;
     private final UserService userService;
     private SecurityConfig securityConfig;
 
     @Autowired
-    public UserController(SecurityConfig securityConfig, UserService userService) {
+    public UserController(Producers producers, SecurityConfig securityConfig, UserService userService) {
+        this.producers = producers;
         this.securityConfig = securityConfig;
         this.userService = userService;
     }
@@ -40,6 +44,10 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
+        User userSaved = userService.createUser(user);
+        if(!ObjectUtils.isEmpty(userSaved)) {
+            producers.sendMessage("Welcome To Kafka Project");
+        }
         return userService.createUser(user);
     }
 

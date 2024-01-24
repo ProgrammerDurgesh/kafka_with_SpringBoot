@@ -26,6 +26,27 @@ spring:
           auth: true
           starttls:
             enable: true
+  # Kafka configuration
+  kafka:
+    common:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      topic:
+        name: order_topics
+  #for producer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      #for consumers
+    consumer:
+      group-id: stock #group id set as per project or module Name
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
+
+
+
 
 logging:
   level:
