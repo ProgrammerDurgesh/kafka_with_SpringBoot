@@ -1,5 +1,5 @@
 server:
-  port: 2222
+  port: 8080
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/kafka?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
@@ -31,22 +31,19 @@ spring:
     common:
       bootstrap-servers: localhost:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       topic:
-        name: order_topics
-  #for producer
+        name: quickstart-events
+    # for producer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      #for consumers
+      value-serializer: org.apache.kafka.common.serialization.StringDeserializer
+    # for consumers
     consumer:
-      group-id: stock #group id set as per project or module Name
+      group-id: stock # group id set as per project or module Name
       auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: "*"
-
-
-
 
 logging:
   level:

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class Consumers {
     private static final Logger LOGGER = LoggerFactory.getLogger(Consumers.class);
 
-    @KafkaListener(topics = "${kafka.common.topic.name}", groupId = "${kafka.consumer.group-id}")
+    @KafkaListener(topics = "${spring.kafka.common.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(Object object) {
         LOGGER.info(String.format("Message Received => %s", object));
         //save message into DB as per requirement
