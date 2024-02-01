@@ -45,19 +45,27 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         User userSaved = userService.createUser(user);
-        if(!ObjectUtils.isEmpty(userSaved)) {
-            producers.sendMessage("Welcome To Kafka Project");
+        if (!ObjectUtils.isEmpty(userSaved)) {
+            producers.sendMessage("", "Welcome To Kafka Project", "user created");
         }
         return userService.createUser(user);
     }
 
     @PutMapping("/{userId}")
     public User updateUser(@PathVariable Integer userId, @RequestBody User user) {
-        return userService.updateUser(userId, user);
+        User user1 = userService.updateUser(userId, user);
+        if (!ObjectUtils.isEmpty(user1)) {
+            producers.sendMessage("", "Welcome To Kafka Project", "user updated");
+        }
+        return user1;
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Integer userId) {
         userService.deleteUser(userId);
+        User user = userService.getUserById(userId);
+        if (ObjectUtils.isEmpty(user)) {
+            producers.sendMessage("", "Welcome To Kafka Project", "user deleted");
+        }
     }
 }

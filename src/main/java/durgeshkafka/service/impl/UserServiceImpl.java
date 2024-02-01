@@ -4,9 +4,9 @@ import durgeshkafka.entity.User;
 import durgeshkafka.repo.UserRepository;
 import durgeshkafka.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Integer userId, User user) {
         if (userRepository.existsById(userId)) {
             user.setId(userId);
-            return userRepository.save(user);
+            return this.createUser(user);
         }
         return null;
     }

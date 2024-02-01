@@ -20,7 +20,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private MyUserDetails myUserDetails;
 
-
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //get Token
