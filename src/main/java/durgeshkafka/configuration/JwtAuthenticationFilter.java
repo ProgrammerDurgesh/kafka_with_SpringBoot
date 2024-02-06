@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+// ... (imports and annotations)
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
@@ -21,32 +23,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private MyUserDetails myUserDetails;
 
     @Override
-    protected void doFilterInternal(@NotNull HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        //get Token
-        //Bearer
-        //Validate
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestTokenHeader = request.getHeader("Authorization");
         String userName = null;
         String token = null;
-        //check null & format
+
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             token = requestTokenHeader.substring(7);
             userName = this.jwtUtil.getUsernameFromToken(token);
-
-            //get user Details
-            UserDetails userDetails = this.myUserDetails.loadUserByUsername(userName);
-
-            //security Validate
+            if (jwtUtil.isTokenValid(token))
             if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                // Validate token expiration
+                if (jwtUtil.isTokenValid(token)) {
+                    UserDetails userDetails = this.myUserDetails.loadUserByUsername(userName);
+
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                } else {
+                    System.out.println("Token has expired");
+                }
             } else {
-                System.out.println("token not validate found");
+                System.out.println("Token not valid or user details already set");
             }
         } else {
-            System.out.println("not found ");
+            System.out.println("Token not found");
         }
+
         filterChain.doFilter(request, response);
     }
+
 }

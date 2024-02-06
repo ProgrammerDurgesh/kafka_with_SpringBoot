@@ -16,12 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    private static final String[] authorizedURL = { "/auth/**","/api/users"};
+    private static final String[] authorizedURL = { "/auth/**", "/api/users/**", "/ws-chat/**" };
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
@@ -35,7 +36,7 @@ public class SecurityConfig {
         http.authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/api/users/**").permitAll().anyRequest().authenticated()).httpBasic(withDefaults());
         return http.build();
     }*/
-    @Bean
+   /* @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests(authorizeRequests ->
@@ -46,7 +47,43 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions
+                                .sameOrigin()
+                        )
+                );
+
+        return http.build();
+    }*/
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors().disable()
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .antMatchers("/ws-chat/**").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .sessionManagement(sessionManagement ->
+                        sessionManagement
+                                .maximumSessions(1)
+                                .maxSessionsPreventsLogin(true)
+                                .expiredUrl("/login?expired")
+                )
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/login")
+                                .failureUrl("/login-error")
+                )
+                .logout(logout ->
+                        logout
+                                .logoutSuccessUrl("/")
+                                .clearAuthentication(true)
+                                .deleteCookies("JSESSIONID")
+                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
+                );
 
         return http.build();
     }
