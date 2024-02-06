@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    private static final String[] authorizedURL = { "/auth/**", "/api/users/**", "/ws-chat/**" };
+    private static final String[] authorizedURL = { "/auth/**", "/api/users/**", "/chat/**" };
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
@@ -36,9 +36,10 @@ public class SecurityConfig {
         http.authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/api/users/**").permitAll().anyRequest().authenticated()).httpBasic(withDefaults());
         return http.build();
     }*/
-   /* @Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.cors().disable()
+                .csrf().disable()
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .antMatchers("/api/users/**").authenticated()
@@ -47,46 +48,12 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions
-                                .sameOrigin()
-                        )
-                );
-
-        return http.build();
-    }*/
-
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors().disable()
-                .authorizeRequests(authorizeRequests ->
-                        authorizeRequests
-                                .antMatchers("/ws-chat/**").permitAll()
-                                .anyRequest().authenticated()
-                )
-                .sessionManagement(sessionManagement ->
-                        sessionManagement
-                                .maximumSessions(1)
-                                .maxSessionsPreventsLogin(true)
-                                .expiredUrl("/login?expired")
-                )
-                .formLogin(formLogin ->
-                        formLogin
-                                .loginPage("/login")
-                                .failureUrl("/login-error")
-                )
-                .logout(logout ->
-                        logout
-                                .logoutSuccessUrl("/")
-                                .clearAuthentication(true)
-                                .deleteCookies("JSESSIONID")
-                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-                );
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
